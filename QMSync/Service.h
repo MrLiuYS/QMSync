@@ -11,15 +11,19 @@
 #import <SVProgressHUD.h>
 #import <GDataXMLNode.h>
 #import <FMDB.h>
+#import "Model.h"
 
-#define kBaseURLString @"http://fengsu.m.supfree.net/"
 
 
 @interface Service : AFHTTPSessionManager
 
-+ (instancetype)sharedClient;
++ (instancetype)fengshuClient;
 
 + (FMDatabase *)db;
 
+
++ (id)fengshuBaseBlock:(void (^)(NSArray *array, NSError *error))block;
+
++ (NSArray *)readFengSu;
 
 @end

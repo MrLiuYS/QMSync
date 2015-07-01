@@ -8,7 +8,16 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
+#import "Service.h"
+
+
+@interface ViewController () {
+    
+    
+    __weak IBOutlet UIButton *fengsuInfoBtn;
+    
+    
+}
 
 @end
 
@@ -17,7 +26,31 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    fengsuInfoBtn.enabled = YES;
+    
+    
+//    [Service fengshuBaseBlock:^(NSArray *array, NSError *error) {
+//       
+//        [SVProgressHUD dismiss];
+//    
+//        fengsuInfoBtn.enabled = YES;
+//
+//    
+//    }];
+
 }
+
+- (IBAction)touchFengsuInfo:(id)sender {
+    
+    
+    [Service readFengSu];
+    
+    
+}
+
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

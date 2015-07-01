@@ -15,6 +15,7 @@
 		6C091CBF1B441F4F00DECCBA /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6C091CBD1B441F4F00DECCBA /* LaunchScreen.xib */; };
 		6C091CCB1B441F4F00DECCBA /* QMSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C091CCA1B441F4F00DECCBA /* QMSyncTests.m */; };
 		6C091CD61B44205800DECCBA /* Service.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C091CD51B44205800DECCBA /* Service.m */; };
+		6C091CD91B442A5100DECCBA /* Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C091CD81B442A5100DECCBA /* Model.m */; };
 		86B5DB262EBA30CF824DF3CE /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0D9F185151F97B9D1AF3B8 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +47,8 @@
 		6C091CCA1B441F4F00DECCBA /* QMSyncTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QMSyncTests.m; sourceTree = "<group>"; };
 		6C091CD41B44205800DECCBA /* Service.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Service.h; sourceTree = "<group>"; };
 		6C091CD51B44205800DECCBA /* Service.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Service.m; sourceTree = "<group>"; };
+		6C091CD71B442A5100DECCBA /* Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Model.h; sourceTree = "<group>"; };
+		6C091CD81B442A5100DECCBA /* Model.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Model.m; sourceTree = "<group>"; };
 		CC0D9F185151F97B9D1AF3B8 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -105,6 +108,8 @@
 				6C091CB61B441F4F00DECCBA /* ViewController.m */,
 				6C091CD41B44205800DECCBA /* Service.h */,
 				6C091CD51B44205800DECCBA /* Service.m */,
+				6C091CD71B442A5100DECCBA /* Model.h */,
+				6C091CD81B442A5100DECCBA /* Model.m */,
 				6C091CB81B441F4F00DECCBA /* Main.storyboard */,
 				6C091CBB1B441F4F00DECCBA /* Images.xcassets */,
 				6C091CBD1B441F4F00DECCBA /* LaunchScreen.xib */,
@@ -287,6 +292,7 @@
 				6C091CD61B44205800DECCBA /* Service.m in Sources */,
 				6C091CB41B441F4F00DECCBA /* AppDelegate.m in Sources */,
 				6C091CB11B441F4F00DECCBA /* main.m in Sources */,
+				6C091CD91B442A5100DECCBA /* Model.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
