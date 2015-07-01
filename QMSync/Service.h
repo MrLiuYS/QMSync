@@ -7,7 +7,19 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AFNetworking.h>
+#import <SVProgressHUD.h>
+#import <GDataXMLNode.h>
+#import <FMDB.h>
 
-@interface Service : NSObject
+#define kBaseURLString @"http://fengsu.m.supfree.net/"
+
+
+@interface Service : AFHTTPSessionManager
+
++ (instancetype)sharedClient;
+
++ (FMDatabase *)db;
+
 
 @end
