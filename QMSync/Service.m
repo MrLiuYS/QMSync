@@ -104,9 +104,77 @@
     
 }
 
++ (id)fengshuSub:(Model *)aModel Block:(void (^)(NSArray *array, NSError *error))block
+{
+    [SVProgressHUD show];
+    return [[Service fengshuClient] GET:[Service encodingBKStr:aModel.parentHref]
+                             parameters:nil
+                                success:^(NSURLSessionDataTask *task, id responseObject) {
+                                    
+                                    block([self parseFengshuSubList:responseObject],nil);
+                                    
+                                } failure:^(NSURLSessionDataTask *task, NSError *error) {
+                                    
+                                    [SVProgressHUD showErrorWithStatus:@"数据错误,请稍后再试"];
+                                    
+                                }];
+    
+}
++ (NSArray *)parseFengshuSubList:(id)response {
+    
+    NSMutableArray * mainArray = [NSMutableArray array];
+    
+    @autoreleasepool {
+        GDataXMLDocument * doc = [[GDataXMLDocument alloc]initWithHTMLData:response
+                                                                  encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)
+                                                                     error:NULL];
+        if (doc) {
+            
+            NSArray * trArray = [doc nodesForXPath:@"//ul" error:NULL];
+            
+            for (GDataXMLElement * item2 in trArray)
+            {
+                
+                NSArray * a = [item2  elementsForName:@"a"];
+                
+                for (GDataXMLElement * element in a) {
+                    
+                    NSLog(@"%@:%@",element.stringValue,[[element attributeForName:@"href"] stringValue]);
+                    
+                    if ([element attributeForName:@"href"]) {
+                        
+                        NSString * href = [[element attributeForName:@"href"] stringValue];
+                        
+                        Model * m = nil;
+                        
+                        if ([href hasPrefix:@"left"])
+                        {
+                            m = [[Model alloc]initHref:href title:@"" parent:element.stringValue parentHref:href];
+                        }
+                        else
+                        {
+                            m = [[Model alloc]initHref:href title:element.stringValue];
+                        }
+                        
+                        [mainArray addObject:m];
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    
+    [Service insertArray:mainArray];
+    
+    return mainArray;
+    
+}
+
+
 + (id)info:(Model *)aModel withBlock:(void (^)(id infoModel, NSError *error))block {
     
-    return [[Service fengshuClient] GET:[Service encodingBKStr:aModel.parentHref.length>0?aModel.parentHref:aModel.href]
+    return [[Service fengshuClient] GET:[Service encodingBKStr:aModel.href]
                             parameters:nil
                                success:^(NSURLSessionDataTask *task, id responseObject) {
                                    
@@ -131,44 +199,79 @@
                                                                   encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)
                                                                      error:NULL];
         if (doc) {
+//            
+//            <div id="main">
+            //div[@class='cdiv']
             
-            NSArray * trArray = [doc nodesForXPath:@"//p" error:NULL];
+            NSArray * trArray = [doc nodesForXPath:@"//div" error:NULL];
             
-            for (GDataXMLElement * item2 in trArray)
-            {
+            if (trArray.count>0) {
+                int i = 0;
+                for (GDataXMLElement * item2 in trArray)
+                {
+                    
+                    if (i == 17) {
+                        NSString * xmlString = [item2.stringValue stringByReplacingOccurrencesOfString:@"<br/>" withString:@"\n"];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<p>" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</p>" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<td>" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</td>" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@" " withString:@""];
+                        
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&#13;\n" withString:@""];
+                        
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"\n\n" withString:@"\n"];
+                        
+                        xmlString = [xmlString stringByTrimmingCharactersInSet:
+                                     [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                        
+                        aModel.info = [NSString stringWithFormat:@"%@\n%@",aModel.info,xmlString.length?xmlString:@""];
+
+                        break;
+                    }
+                    i++;
+                }
+
                 
-                NSArray * dr = [item2 elementsForName:@"br"];
                 
-                if (dr) {
+            }else {
+                
+                trArray = [doc nodesForXPath:@"//p" error:NULL];
+                
+                for (GDataXMLElement * item2 in trArray)
+                {
                     
-                    NSString * xmlString = [item2.XMLString stringByReplacingOccurrencesOfString:@"<br/>" withString:@"\n"];
-                    xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@""];
-                    xmlString = [xmlString stringByReplacingOccurrencesOfString:@"" withString:@""];
-                    xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<p>" withString:@""];
-                    xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</p>" withString:@""];
-                    xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<td>" withString:@""];
-                    xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</td>" withString:@""];
-                    xmlString = [xmlString stringByReplacingOccurrencesOfString:@" " withString:@""];
+                    NSArray * dr = [item2 elementsForName:@"br"];
                     
-                    xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&#13;\n" withString:@""];
-                    
-                    xmlString = [xmlString stringByTrimmingCharactersInSet:
-                                 [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-                    
-                    aModel.info = [NSString stringWithFormat:@"%@\n%@",aModel.info,xmlString.length?xmlString:@""];
-                    
+                    if (dr) {
+                        
+                        NSString * xmlString = [item2.XMLString stringByReplacingOccurrencesOfString:@"<br/>" withString:@"\n"];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<p>" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</p>" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<td>" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</td>" withString:@""];
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@" " withString:@""];
+                        
+                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&#13;\n" withString:@""];
+                        
+                        xmlString = [xmlString stringByTrimmingCharactersInSet:
+                                     [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                        
+                        aModel.info = [NSString stringWithFormat:@"%@\n%@",aModel.info,xmlString.length?xmlString:@""];
+                        
+                    }
                 }
             }
-            
         }
     }
     
     return aModel;
 }
-
-
-
-
 
 
 #pragma mark - 数据库
@@ -213,7 +316,7 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where parenthref = '' and info = '' order by href"];
+    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where href != '' and info = '' and parent = '' order by href"];
     
     while ([rs next]) {
         
@@ -222,6 +325,11 @@
                                          parent:[rs stringForColumn:@"parent"]
                                      parentHref:[rs stringForColumn:@"parenthref"]]];
     }
+    
+    if (array.count == 0) {
+        return array;
+    }
+    
     
     [db open];
     
