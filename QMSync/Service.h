@@ -26,4 +26,6 @@
 
 + (NSArray *)readFengSu;
 
++ (NSArray *)readFengSuSubCity;
+
 @end

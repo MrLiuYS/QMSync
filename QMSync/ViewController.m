@@ -30,14 +30,14 @@
     fengsuInfoBtn.enabled = YES;
     
     
-    [Service fengshuBaseBlock:^(NSArray *array, NSError *error) {
-       
-        [SVProgressHUD dismiss];
-    
-        fengsuInfoBtn.enabled = YES;
-
-    
-    }];
+//    [Service fengshuBaseBlock:^(NSArray *array, NSError *error) {
+//       
+//        [SVProgressHUD dismiss];
+//    
+//        fengsuInfoBtn.enabled = YES;
+//
+//    
+//    }];
 
 }
 
@@ -45,6 +45,7 @@
     
     
     [Service readFengSu];
+//    [Service readFengSuSubCity];
     
     
 }
