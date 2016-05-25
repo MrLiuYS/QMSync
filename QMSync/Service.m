@@ -28,7 +28,7 @@
     static Service *_sharedClient = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _sharedClient = [[Service alloc] initWithBaseURL:[NSURL URLWithString:@"http://miyu.m.supfree.net/index.asp"]];
+        _sharedClient = [[Service alloc] initWithBaseURL:[NSURL URLWithString:@"http://miyu.m.supfree.net/"]];
         
         _sharedClient.responseSerializer = [AFHTTPResponseSerializer serializer];
         
@@ -40,7 +40,7 @@
 + (id)fengshuBaseBlock:(void (^)(NSArray *array, NSError *error))block
 {
     [SVProgressHUD show];
-    return [[Service fengshuClient] GET:@"http://miyu.m.supfree.net/index.asp"
+    return [[Service fengshuClient] GET:@"index.asp"
                              parameters:nil
                                 success:^(NSURLSessionDataTask *task, id responseObject) {
                                     
@@ -215,6 +215,9 @@
     
     aModel.info = @"";
     
+    
+    NSMutableArray * mainArray = [NSMutableArray array];
+    
     @autoreleasepool {
         GDataXMLDocument * doc = [[GDataXMLDocument alloc]initWithHTMLData:response
                                                                   encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)
@@ -224,70 +227,119 @@
             //            <div id="main">
             //div[@class='cdiv']
             
-            NSArray * trArray = [doc nodesForXPath:@"//div" error:NULL];
             
-            if (trArray.count>0) {
-                int i = 0;
-                for (GDataXMLElement * item2 in trArray)
-                {
+            NSArray * trArray = [doc nodesForXPath:@"//table" error:NULL];
+            
+            for (GDataXMLElement * item2 in trArray)
+            {
+                
+                NSArray * tr = [item2 elementsForName:@"tr"];
+                
+                for (GDataXMLElement * item1 in tr) {
                     
-                    if (i == 17) {
-                        NSString * xmlString = [item2.stringValue stringByReplacingOccurrencesOfString:@"<br/>" withString:@"\n"];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<p>" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</p>" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<td>" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</td>" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@" " withString:@""];
-                        
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&#13;\n" withString:@""];
-                        
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"\n\n" withString:@"\n"];
-                        
-                        xmlString = [xmlString stringByTrimmingCharactersInSet:
-                                     [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-                        
-                        aModel.info = [NSString stringWithFormat:@"%@\n%@",aModel.info,xmlString.length?xmlString:@""];
-                        
-                        break;
+                    NSArray * td = [item1 elementsForName:@"td"];
+                    
+                    NSString * anTitle = @"";
+                    
+                    if (td.count == 2) {
+                        anTitle = [item1.stringValue stringByReplacingOccurrencesOfString:@"\r" withString:@""];
+                        anTitle = [anTitle stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                        anTitle = [anTitle stringByReplacingOccurrencesOfString:@"查看谜底" withString:@""];
                     }
-                    i++;
+                    
+                    
+                    
+                    for (GDataXMLElement * item3 in td) {
+                        NSArray * a = [item3  elementsForName:@"a"];
+                        
+                        for (GDataXMLElement * element in a) {
+                            
+                            NSLog(@"%@:%@",element.stringValue,[[element attributeForName:@"href"] stringValue]);
+                            
+                            NSString * href = [[element attributeForName:@"href"] stringValue];
+                            
+                            //                            Model * m = [[Model alloc]initHref:href title:element.stringValue];
+                            Model *m = [[Model alloc]initHref:href title:anTitle
+                                                       parent:aModel.title
+                                                   parentHref:aModel.href];
+                            
+                            [mainArray addObject:m];
+                            
+                        }
+                    }
+                    
                 }
                 
                 
                 
-            }else {
-                
-                trArray = [doc nodesForXPath:@"//p" error:NULL];
-                
-                for (GDataXMLElement * item2 in trArray)
-                {
-                    
-                    NSArray * dr = [item2 elementsForName:@"br"];
-                    
-                    if (dr) {
-                        
-                        NSString * xmlString = [item2.XMLString stringByReplacingOccurrencesOfString:@"<br/>" withString:@"\n"];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<p>" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</p>" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<td>" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</td>" withString:@""];
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@" " withString:@""];
-                        
-                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&#13;\n" withString:@""];
-                        
-                        xmlString = [xmlString stringByTrimmingCharactersInSet:
-                                     [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-                        
-                        aModel.info = [NSString stringWithFormat:@"%@\n%@",aModel.info,xmlString.length?xmlString:@""];
-                        
-                    }
-                }
             }
+            
+            [Service insertArray:mainArray];
+            
+            //            NSArray * trArray = [doc nodesForXPath:@"//table" error:NULL];
+            //            
+            //            if (trArray.count>0) {
+            //                int i = 0;
+            //                for (GDataXMLElement * item2 in trArray)
+            //                {
+            //                    
+            //                    if (i == 17) {
+            //                        NSString * xmlString = [item2.stringValue stringByReplacingOccurrencesOfString:@"<br/>" withString:@"\n"];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<p>" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</p>" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<td>" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</td>" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@" " withString:@""];
+            //                        
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&#13;\n" withString:@""];
+            //                        
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"\n\n" withString:@"\n"];
+            //                        
+            //                        xmlString = [xmlString stringByTrimmingCharactersInSet:
+            //                                     [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            //                        
+            //                        aModel.info = [NSString stringWithFormat:@"%@\n%@",aModel.info,xmlString.length?xmlString:@""];
+            //                        
+            //                        break;
+            //                    }
+            //                    i++;
+            //                }
+            //                
+            //                
+            //                
+            //            }else {
+            //                
+            //                trArray = [doc nodesForXPath:@"//p" error:NULL];
+            //                
+            //                for (GDataXMLElement * item2 in trArray)
+            //                {
+            //                    
+            //                    NSArray * dr = [item2 elementsForName:@"br"];
+            //                    
+            //                    if (dr) {
+            //                        
+            //                        NSString * xmlString = [item2.XMLString stringByReplacingOccurrencesOfString:@"<br/>" withString:@"\n"];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<p>" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</p>" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"<td>" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"</td>" withString:@""];
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@" " withString:@""];
+            //                        
+            //                        xmlString = [xmlString stringByReplacingOccurrencesOfString:@"&#13;\n" withString:@""];
+            //                        
+            //                        xmlString = [xmlString stringByTrimmingCharactersInSet:
+            //                                     [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            //                        
+            //                        aModel.info = [NSString stringWithFormat:@"%@\n%@",aModel.info,xmlString.length?xmlString:@""];
+            //                        
+            //                    }
+            //                }
+            //            }
         }
     }
     
