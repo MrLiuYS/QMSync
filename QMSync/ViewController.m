@@ -27,25 +27,25 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-//    fengsuInfoBtn.enabled = YES;
+    //    fengsuInfoBtn.enabled = YES;
     
     
     [Service fengshuBaseBlock:^(NSArray *array, NSError *error) {
-       
-        [Service readFengSuSubCity];
+        
+        //        [Service readFengSuSubCity];
         
         fengsuInfoBtn.enabled = YES;
-
+        
         [SVProgressHUD dismiss];
     }];
-
+    
 }
 
 - (IBAction)touchFengsuInfo:(id)sender {
     
     
     [Service readFengSu];
-//    [Service readFengSuSubCity];
+    //    [Service readFengSuSubCity];
     
     
     

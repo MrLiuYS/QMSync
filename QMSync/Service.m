@@ -31,7 +31,7 @@
         _sharedClient = [[Service alloc] initWithBaseURL:[NSURL URLWithString:@"http://miyu.m.supfree.net/"]];
         
         _sharedClient.responseSerializer = [AFHTTPResponseSerializer serializer];
-        
+        _sharedClient.operationQueue.maxConcurrentOperationCount = 1;
     });
     
     return _sharedClient;
@@ -389,14 +389,36 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where  title != '' and info = ''  order by href"];
+    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where  title != '' and parenthref = ''   order by href"];
     
     while ([rs next]) {
         
-        [array addObject:[[Model alloc]initHref:[rs stringForColumn:@"href"]
-                                          title:[rs stringForColumn:@"title"]
-                                         parent:[rs stringForColumn:@"parent"]
-                                     parentHref:[rs stringForColumn:@"parenthref"]]];
+        NSString * href = [rs stringForColumn:@"href"];
+        
+        NSString * title = [rs stringForColumn:@"title"];
+        
+        int count = 30;
+        
+        if ([title isEqualToString:@"成语"]) {
+            count = 300;
+        }
+        else if ([title isEqualToString:@"常言俗语"]) {
+            count = 120;
+        }
+        else {
+            count = 20;
+        }
+        
+        for (int index = 0; index < count; index ++) {
+            
+            if ([href rangeOfString:@"page"].location == NSNotFound) {
+                [array addObject:[[Model alloc]initHref:[NSString stringWithFormat:@"%@&page=%d",href,index]
+                                                  title:title
+                                                 parent:[rs stringForColumn:@"parent"]
+                                             parentHref:[rs stringForColumn:@"parenthref"]]];
+            }
+        }
+        
     }
     
     if (array.count == 0) {
@@ -412,6 +434,8 @@
         
         Model * m = array[i];
         
+        //        dispatch_async(dispatch_get_main_queue(), ^{
+        
         [Service info:m withBlock:^(Model * infoModel, NSError *error) {
             
             [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",infoModel.href,infoModel.title,infoModel.info,infoModel.parent,infoModel.parentHref];
@@ -419,6 +443,10 @@
             [SVProgressHUD showProgress:i/(1.0 * array.count)];
             
         }];
+        
+        
+        //        });
+        
         
     }
     
@@ -431,7 +459,7 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where parenthref != ''"];
+    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where parenthref == ''"];
     
     while ([rs next]) {
         
