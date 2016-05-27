@@ -259,7 +259,8 @@
                             NSString * href = [[element attributeForName:@"href"] stringValue];
                             
                             //                            Model * m = [[Model alloc]initHref:href title:element.stringValue];
-                            Model *m = [[Model alloc]initHref:href title:anTitle
+                            Model *m = [[Model alloc]initHref:href
+                                                        title:anTitle
                                                        parent:aModel.title
                                                    parentHref:aModel.href];
                             
@@ -374,9 +375,33 @@
     
     [db beginTransaction];
     
+    
+    
     for (Model * m in aArray) {
         
-        [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",m.href,m.title,m.info,m.parent,m.parentHref];
+        NSString *hrefStr = @"";
+        NSString *parentHrefStr = @"";
+        
+        NSRange range = [m.href rangeOfString:@"&page"];//匹配得到的下标
+        
+        if (range.length > 0) {
+            
+            hrefStr = [m.href substringToIndex:range.location];
+        }else {
+            hrefStr = m.href;
+        }
+        
+        NSRange range1 = [m.parentHref rangeOfString:@"&page"];//匹配得到的下标
+        
+        if (range1.length > 0) {
+            
+            parentHrefStr = [m.parentHref substringToIndex:range1.location];
+        }else {
+            parentHrefStr = m.parentHref;
+        }
+        
+        
+        [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",hrefStr,m.title,m.info,m.parent,parentHrefStr];
         
     }
     [db commit];
@@ -434,18 +459,41 @@
         
         Model * m = array[i];
         
-        //        dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [Service info:m withBlock:^(Model * infoModel, NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
             
-            [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",infoModel.href,infoModel.title,infoModel.info,infoModel.parent,infoModel.parentHref];
+            [Service info:m withBlock:^(Model * infoModel, NSError *error) {
+                
+                
+                NSString *hrefStr = @"";
+                NSString *parentHrefStr = @"";
+                
+                NSRange range = [infoModel.href rangeOfString:@"&page"];//匹配得到的下标
+                
+                if (range.length > 0) {
+                    
+                    hrefStr = [infoModel.href substringToIndex:range.location];
+                }else {
+                    hrefStr = infoModel.href;
+                }
+                
+                NSRange range1 = [infoModel.parentHref rangeOfString:@"&page"];//匹配得到的下标
+                
+                if (range1.length > 0) {
+                    
+                    parentHrefStr = [infoModel.parentHref substringToIndex:range1.location];
+                }else {
+                    parentHrefStr = infoModel.parentHref;
+                }
+                
+                
+                [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",hrefStr,infoModel.title,infoModel.info,infoModel.parent,parentHrefStr];
+                
+                [SVProgressHUD showProgress:i/(1.0 * array.count)];
+                
+            }];
             
-            [SVProgressHUD showProgress:i/(1.0 * array.count)];
             
-        }];
-        
-        
-        //        });
+        });
         
         
     }
@@ -486,7 +534,29 @@
             
             for (Model * temp in array) {
                 
-                [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",temp.href,temp.title,temp.info,m.parent,m.parentHref];
+                NSString *hrefStr = @"";
+                NSString *parentHrefStr = @"";
+                
+                NSRange range = [temp.href rangeOfString:@"&page"];//匹配得到的下标
+                
+                if (range.length > 0) {
+                    
+                    hrefStr = [temp.href substringToIndex:range.location];
+                }else {
+                    hrefStr = temp.href;
+                }
+                
+                NSRange range1 = [temp.parentHref rangeOfString:@"&page"];//匹配得到的下标
+                
+                if (range1.length > 0) {
+                    
+                    parentHrefStr = [temp.parentHref substringToIndex:range1.location];
+                }else {
+                    parentHrefStr = temp.parentHref;
+                }
+                
+                
+                [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",hrefStr,temp.title,temp.info,m.parent,parentHrefStr];
                 
             }
             
