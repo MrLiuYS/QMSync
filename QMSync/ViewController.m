@@ -60,6 +60,7 @@
     
     [Service getAnswer];
     
+    [self performSelector:@selector(touchAnswer:) withObject:nil afterDelay:60*3];
 }
 
 
@@ -103,19 +104,33 @@
                 
                 if (isSuccessful) {
                     
-                    if (subcount == dbArray.count/50) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         
                         NSLog(@"成功");
-                        //                        [ServiceDB deleteDataTableName:kCN_cargo
-                        //                                               withKey:kstate
-                        //                                            withObject:@"2"];
-                        //                        
-                        //                        successHandler(@"成功");
-                    }
+                        
+                        [SVProgressHUD showProgress:1.0*subcount/dbArray.count
+                                             status:[NSString stringWithFormat:@"%d",subcount]];
+                        
+                        //                        [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"%d",subcount]
+                        //                                                    maskType:SVProgressHUDMaskTypeBlack];
+                        
+                    });
+                    
                     subcount++;
                     
                 }else {
-                    NSLog(@"失败");
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        NSLog(@"失败");
+                        //                        [SVProgressHUD showSuccessWithStatus:@"失败"
+                        //                                                    maskType:SVProgressHUDMaskTypeBlack];
+                        
+                    });
+                    
+                    
+                    
+                    
                     //                    failureHandler(error);
                 }
                 

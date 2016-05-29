@@ -258,8 +258,8 @@
                         aModel.info = [NSString stringWithFormat:@"%@&-&-&%@",explainStr,anTitle];
                         
                         Model *m = [[Model alloc]initHref:aModel.href
-                                                    title:[NSString stringWithFormat:@"%@&-&-&%@",explainStr,anTitle]
-                                                     info:anTitle
+                                                    title:aModel.title
+                                                     info:aModel.info
                                                    parent:aModel.parent
                                                parentHref:aModel.parentHref];
                         
@@ -436,36 +436,31 @@
     
     __block NSArray * dbArray = [Service readAllDataModel];
     
-    for (int index = 0; index < dbArray.count; index++) {
+    for (int index = 0; index < 1000; index++) {
+        
+        if (dbArray.count <=index) {
+            return;
+        }
         
         Model * model = dbArray[index];
         
         if (model.parentHref.length > 0 && model.info.length == 0) {
             
             
-            dispatch_async(dispatch_get_main_queue(), ^{
+            //            dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [Service info:model withBlock:^(Model * infoModel, NSError *error) {
                 
-                [Service info:model withBlock:^(Model * infoModel, NSError *error) {
-                    
-                    
-                    //                    NSString *hrefStr = @"";
-                    //                    NSString *parentHrefStr = @"";
-                    
-                    //                    hrefStr = infoModel.href;
-                    
-                    
-                    //                    parentHrefStr = infoModel.parentHref;
-                    
-                    
-                    //                    [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",hrefStr,infoModel.title,infoModel.info,infoModel.parent,parentHrefStr];
-                    
+                dispatch_async(dispatch_get_main_queue(), ^{
                     [SVProgressHUD showProgress:index/(1.0 * dbArray.count)
                                          status:[NSString stringWithFormat:@"%f",index/(1.0 * dbArray.count)]];
                     
-                }];
+                });
                 
-                
-            });
+            }];
+            
+            
+            //            });
             
         }
         
