@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="jtm-H7-Opw">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="jtm-H7-Opw">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -13,11 +14,11 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NGo-Y8-YZI">
-                                <rect key="frame" x="255" y="72" width="90" height="30"/>
+                                <rect key="frame" x="115" y="72" width="90" height="30"/>
                                 <state key="normal" title="获取风俗详情">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -25,21 +26,38 @@
                                     <action selector="touchFengsuInfo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CaY-h9-gwC"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uNJ-sK-tj4">
+                                <rect key="frame" x="0.0" y="528" width="320" height="40"/>
+                                <color key="backgroundColor" red="0.0" green="0.59999999999999998" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="4QI-0a-iaL"/>
+                                </constraints>
+                                <state key="normal" title="同步数据">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="touchSync:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jZr-HB-v3C"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="NGo-Y8-YZI" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="2sx-oh-nCe"/>
                             <constraint firstItem="NGo-Y8-YZI" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="V5r-ut-RIN"/>
+                            <constraint firstItem="uNJ-sK-tj4" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="hmr-v0-rIj"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="uNJ-sK-tj4" secondAttribute="bottom" id="jEg-qb-hbg"/>
+                            <constraint firstAttribute="trailing" secondItem="uNJ-sK-tj4" secondAttribute="trailing" id="mhu-hp-IM1"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="9zC-MP-fom"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="fengsuInfoBtn" destination="NGo-Y8-YZI" id="W42-Pf-0gB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1117" y="285"/>
+            <point key="canvasLocation" x="107" y="-341"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="l2p-bA-TyE">
@@ -57,7 +75,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PEw-Py-JFY" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="305" y="-408"/>
+            <point key="canvasLocation" x="-619" y="-334"/>
         </scene>
     </scenes>
 </document>

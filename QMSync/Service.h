@@ -28,4 +28,6 @@
 
 + (NSArray *)readFengSuSubCity;
 
++ (NSArray <NSDictionary*> *)readAllData;
+
 @end

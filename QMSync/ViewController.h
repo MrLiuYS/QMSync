@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+
+#import <BmobSDK/Bmob.h>
+
 @interface ViewController : UIViewController
 
 

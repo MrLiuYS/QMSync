@@ -586,6 +586,33 @@
 }
 
 
++ (NSArray <NSDictionary*> *)readAllData {
+    
+    NSMutableArray * array = [NSMutableArray array];
+    
+    FMDatabase * db = [Service db];
+    
+    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu"];
+    
+    while ([rs next]) {
+        
+        NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:0];
+        for (NSString *str in rs.columnNameToIndexMap) {
+            [dic setObject:[rs stringForColumn:str]?[rs stringForColumn:str]:@"" forKey:str ];
+        }
+        //        [dic setObject:@"" forKey:kshoujia];
+        [array addObject:dic];
+        
+        //        [array addObject:[[Model alloc]initHref:[rs stringForColumn:@"href"]
+        //                                          title:[rs stringForColumn:@"title"]
+        //                                         parent:[rs stringForColumn:@"parent"]
+        //                                     parentHref:[rs stringForColumn:@"parenthref"]]];
+    }
+    
+    return array;
+    
+    
+}
 
 
 @end

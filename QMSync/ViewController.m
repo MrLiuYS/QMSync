@@ -39,7 +39,11 @@
         [SVProgressHUD dismiss];
     }];
     
+    
+    
+    
 }
+
 
 - (IBAction)touchFengsuInfo:(id)sender {
     
@@ -53,6 +57,92 @@
 }
 
 
+- (IBAction)touchSync:(id)sender {
+    
+    __block NSArray * dbArray = [Service readAllData];
+    
+    
+    NSLog(@"%f",ceil(dbArray.count/50));
+    NSLog(@"%lu",MIN(50, dbArray.count % 50));
+    
+    
+    dispatch_group_t group = dispatch_group_create();
+    
+    __block int subcount = 0;
+    
+    for (int section =0 ; section <= ceil(dbArray.count/50); section++) {
+        
+        
+        dispatch_group_async(group, dispatch_get_global_queue(0,0), ^{
+            
+            BmobObjectsBatch    *batch = [[BmobObjectsBatch alloc] init] ;
+            
+            
+            for (int row = 0; row < 50; row++) {
+                
+                if (dbArray.count <= section * 50 + row) {
+                    continue;
+                }
+                
+                NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:dbArray[section * 50 + row]];
+                
+                [batch saveBmobObjectWithClassName:@"riddle" parameters:dic];
+                
+            }
+            
+            
+            [batch batchObjectsInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+                NSLog(@"batch error %@",[error description]);
+                
+                if (isSuccessful) {
+                    
+                    if (subcount == dbArray.count/50) {
+                        
+                        NSLog(@"成功");
+                        //                        [ServiceDB deleteDataTableName:kCN_cargo
+                        //                                               withKey:kstate
+                        //                                            withObject:@"2"];
+                        //                        
+                        //                        successHandler(@"成功");
+                    }
+                    subcount++;
+                    
+                }else {
+                    NSLog(@"失败");
+                    //                    failureHandler(error);
+                }
+                
+            }];
+            
+        });
+        
+    }
+    
+    
+    //    for (int index = 0 ; index < array.count ; index++) {
+    //        
+    //        NSDictionary * dic = array[index];
+    //        
+    //        BmobObject  *cargo = [BmobObject objectWithClassName:@"riddle"];
+    //        
+    //        [cargo saveAllWithDictionary:dic];
+    //        
+    //        [cargo saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+    //            if (isSuccessful) {
+    //                NSLog(@"成功 :%@",cargo.objectId);
+    //            }else{
+    //                if (error) {
+    //                    NSLog(@"失败:%@",error);
+    //                }
+    //            }
+    //        }];
+    //        
+    //    }
+    
+    
+    
+    [self performSelector:@selector(touchSync:) withObject:nil afterDelay:60*10];
+}
 
 
 - (void)didReceiveMemoryWarning {
