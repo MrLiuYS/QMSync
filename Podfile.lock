@@ -20,6 +20,7 @@ PODS:
   - AFNetworking/UIKit (2.5.4):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - BmobSDK (1.7.0)
   - FMDB (2.5):
     - FMDB/standard (= 2.5)
   - FMDB/common (2.5)
@@ -33,6 +34,7 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (~> 2.5.4)
+  - BmobSDK (~> 1.7.0)
   - FMDB (~> 2.5)
   - GDataXML-HTML (~> 1.2.0)
   - SDWebImage (~> 3.7.2)
@@ -40,9 +42,10 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: 05edc0ac4c4c8cf57bcf4b84be5b0744b6d8e71e
+  BmobSDK: 1a7bb2aa514e69663f5b561a5c5cc5b479b20ad2
   FMDB: 96e8f1bcc1329e269330f99770ad4285d9003e52
   GDataXML-HTML: dac3692417e9fc612f8e12d8baae3706fccedcc8
   SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
   SVProgressHUD: 748080e4f36e603f6c02aec292664239df5279c1
 
-COCOAPODS: 0.36.0
+COCOAPODS: 0.39.0
