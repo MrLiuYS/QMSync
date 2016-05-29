@@ -414,7 +414,7 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where  title != '' and parenthref = ''   order by href"];
+    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where  title != '' and parenthref = ''   order by href desc  LIMIT 110,10"];
     
     while ([rs next]) {
         
@@ -425,13 +425,31 @@
         int count = 30;
         
         if ([title isEqualToString:@"成语"]) {
+            count = 278;
+        }
+        else if ([title isEqualToString:@"人名"]) {
             count = 300;
+        }
+        else if ([title isEqualToString:@"诗词句"] || [title isEqualToString:@"古文句"]) {
+            count = 111;
+        }
+        else if ([title isEqualToString:@"电影名"]) {
+            count = 117;
+        }
+        else if ([title isEqualToString:@"商品名"] || [title isEqualToString:@"称谓职务"]) {
+            count = 45;
         }
         else if ([title isEqualToString:@"常言俗语"]) {
             count = 120;
         }
+        else if ([title isEqualToString:@"中国地名"]) {
+            count = 80;
+        }
+        else if ([title isEqualToString:@"中药名"]) {
+            count = 40;
+        }
         else {
-            count = 20;
+            count = 30;
         }
         
         for (int index = 0; index < count; index ++) {
