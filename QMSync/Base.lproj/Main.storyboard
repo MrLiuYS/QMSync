@@ -18,8 +18,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NGo-Y8-YZI">
-                                <rect key="frame" x="115" y="72" width="90" height="30"/>
+                                <rect key="frame" x="0.0" y="72" width="320" height="30"/>
+                                <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="获取风俗详情">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -39,14 +41,32 @@
                                     <action selector="touchSync:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jZr-HB-v3C"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sXR-sI-Sns">
+                                <rect key="frame" x="0.0" y="112" width="320" height="40"/>
+                                <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="swM-xA-psb"/>
+                                </constraints>
+                                <state key="normal" title="获取答案">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="touchAnswer:" destination="BYZ-38-t0r" eventType="touchUpInside" id="65Q-Wp-xx5"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="NGo-Y8-YZI" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="2sx-oh-nCe"/>
+                            <constraint firstItem="NGo-Y8-YZI" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Glq-Ix-p3x"/>
+                            <constraint firstAttribute="trailing" secondItem="sXR-sI-Sns" secondAttribute="trailing" id="QAV-ze-HzF"/>
+                            <constraint firstItem="sXR-sI-Sns" firstAttribute="top" secondItem="NGo-Y8-YZI" secondAttribute="bottom" constant="10" id="Uhs-LB-c2T"/>
                             <constraint firstItem="NGo-Y8-YZI" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="V5r-ut-RIN"/>
+                            <constraint firstAttribute="trailing" secondItem="NGo-Y8-YZI" secondAttribute="trailing" id="VTr-Sy-NwO"/>
                             <constraint firstItem="uNJ-sK-tj4" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="hmr-v0-rIj"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="uNJ-sK-tj4" secondAttribute="bottom" id="jEg-qb-hbg"/>
                             <constraint firstAttribute="trailing" secondItem="uNJ-sK-tj4" secondAttribute="trailing" id="mhu-hp-IM1"/>
+                            <constraint firstItem="sXR-sI-Sns" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="r0P-oX-8mm"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="9zC-MP-fom"/>

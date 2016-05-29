@@ -58,6 +58,7 @@
     NSMutableArray * mainArray = [NSMutableArray array];
     
     @autoreleasepool {
+        
         GDataXMLDocument * doc = [[GDataXMLDocument alloc]initWithHTMLData:response
                                                                   encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)
                                                                      error:NULL];
@@ -90,7 +91,12 @@
                                 
                                 if ([href hasPrefix:@"left"])
                                 {
-                                    m = [[Model alloc]initHref:href title:@"" parent:element.stringValue parentHref:href];
+                                    
+                                    m = [[Model alloc]initHref:href
+                                                         title:@""
+                                                        parent:element.stringValue
+                                                    parentHref:href];
+                                    
                                 }
                                 else
                                 {
@@ -98,22 +104,19 @@
                                 }
                                 
                                 [mainArray addObject:m];
+                                
                             }
-                            
                             
                         }
                         
-                        
-                        
-                        
                     }
                     
-                    
-                    
                 }
+                
             }
             
         }
+        
     }
     
     
@@ -219,20 +222,19 @@
     NSMutableArray * mainArray = [NSMutableArray array];
     
     @autoreleasepool {
+        
         GDataXMLDocument * doc = [[GDataXMLDocument alloc]initWithHTMLData:response
                                                                   encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)
                                                                      error:NULL];
         if (doc) {
-            //            
-            //            <div id="main">
-            //div[@class='cdiv']
-            
             
             NSArray * trArray = [doc nodesForXPath:@"//table" error:NULL];
             
+            NSString * explainStr = @"";
+            
             for (GDataXMLElement * item2 in trArray)
             {
-                
+                explainStr = @"";
                 NSArray * tr = [item2 elementsForName:@"tr"];
                 
                 for (GDataXMLElement * item1 in tr) {
@@ -247,25 +249,42 @@
                         anTitle = [anTitle stringByReplacingOccurrencesOfString:@"查看谜底" withString:@""];
                     }
                     
+                    if ([anTitle hasPrefix:@"提示"]) {
+                        explainStr = anTitle;
+                    }
                     
-                    
-                    for (GDataXMLElement * item3 in td) {
-                        NSArray * a = [item3  elementsForName:@"a"];
+                    if ([anTitle hasPrefix:@"谜底"]) {
                         
-                        for (GDataXMLElement * element in a) {
+                        aModel.info = [NSString stringWithFormat:@"%@&-&-&%@",explainStr,anTitle];
+                        
+                        Model *m = [[Model alloc]initHref:aModel.href
+                                                    title:[NSString stringWithFormat:@"%@&-&-&%@",explainStr,anTitle]
+                                                     info:anTitle
+                                                   parent:aModel.parent
+                                               parentHref:aModel.parentHref];
+                        
+                        [mainArray addObject:m];
+                        
+                    }else {
+                        
+                        for (GDataXMLElement * item3 in td) {
+                            NSArray * a = [item3  elementsForName:@"a"];
                             
-                            NSLog(@"%@:%@",element.stringValue,[[element attributeForName:@"href"] stringValue]);
-                            
-                            NSString * href = [[element attributeForName:@"href"] stringValue];
-                            
-                            //                            Model * m = [[Model alloc]initHref:href title:element.stringValue];
-                            Model *m = [[Model alloc]initHref:href
-                                                        title:anTitle
-                                                       parent:aModel.title
-                                                   parentHref:aModel.href];
-                            
-                            [mainArray addObject:m];
-                            
+                            for (GDataXMLElement * element in a) {
+                                
+                                NSLog(@"%@:%@",element.stringValue,[[element attributeForName:@"href"] stringValue]);
+                                
+                                NSString * href = [[element attributeForName:@"href"] stringValue];
+                                
+                                //                            Model * m = [[Model alloc]initHref:href title:element.stringValue];
+                                Model *m = [[Model alloc]initHref:href
+                                                            title:anTitle
+                                                           parent:aModel.title
+                                                       parentHref:aModel.href];
+                                
+                                [mainArray addObject:m];
+                                
+                            }
                         }
                     }
                     
@@ -375,8 +394,6 @@
     
     [db beginTransaction];
     
-    
-    
     for (Model * m in aArray) {
         
         NSString *hrefStr = @"";
@@ -408,13 +425,64 @@
     [db close];
 }
 
+
++ (void)getAnswer {
+    
+    
+    FMDatabase * db = [Service db];
+    
+    
+    [db open];
+    
+    __block NSArray * dbArray = [Service readAllDataModel];
+    
+    for (int index = 0; index < dbArray.count; index++) {
+        
+        Model * model = dbArray[index];
+        
+        if (model.parentHref.length > 0 && model.info.length == 0) {
+            
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [Service info:model withBlock:^(Model * infoModel, NSError *error) {
+                    
+                    
+                    //                    NSString *hrefStr = @"";
+                    //                    NSString *parentHrefStr = @"";
+                    
+                    //                    hrefStr = infoModel.href;
+                    
+                    
+                    //                    parentHrefStr = infoModel.parentHref;
+                    
+                    
+                    //                    [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",hrefStr,infoModel.title,infoModel.info,infoModel.parent,parentHrefStr];
+                    
+                    [SVProgressHUD showProgress:index/(1.0 * dbArray.count)
+                                         status:[NSString stringWithFormat:@"%f",index/(1.0 * dbArray.count)]];
+                    
+                }];
+                
+                
+            });
+            
+        }
+        
+    }
+    
+    
+    
+    
+}
+
 + (NSArray *)readFengSu {
     
     NSMutableArray * array = [NSMutableArray array];
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where  title != '' and parenthref = ''   order by href desc  LIMIT 110,10"];
+    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where  title != '' and parenthref = ''   order by href desc  LIMIT 95 , 5"];
     
     while ([rs next]) {
         
@@ -506,7 +574,9 @@
                 
                 [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",hrefStr,infoModel.title,infoModel.info,infoModel.parent,parentHrefStr];
                 
-                [SVProgressHUD showProgress:i/(1.0 * array.count)];
+                //                [SVProgressHUD showProgress:i/(1.0 * array.count)];
+                [SVProgressHUD showProgress:i/(1.0 * array.count)
+                                     status:[NSString stringWithFormat:@"%f",i/(1.0 * array.count)]];
                 
             }];
             
@@ -518,6 +588,7 @@
     
     return array;
 }
+
 
 + (NSArray *)readFengSuSubCity {
     
@@ -592,7 +663,7 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu"];
+    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where info == ''"];
     
     while ([rs next]) {
         
@@ -607,6 +678,34 @@
         //                                          title:[rs stringForColumn:@"title"]
         //                                         parent:[rs stringForColumn:@"parent"]
         //                                     parentHref:[rs stringForColumn:@"parenthref"]]];
+    }
+    
+    return array;
+    
+    
+}
+
++ (NSArray <Model*> *)readAllDataModel {
+    
+    NSMutableArray * array = [NSMutableArray array];
+    
+    FMDatabase * db = [Service db];
+    
+    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu"];
+    
+    while ([rs next]) {
+        
+        //        NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:0];
+        //        for (NSString *str in rs.columnNameToIndexMap) {
+        //            [dic setObject:[rs stringForColumn:str]?[rs stringForColumn:str]:@"" forKey:str ];
+        //        }
+        //        //        [dic setObject:@"" forKey:kshoujia];
+        //        [array addObject:dic];
+        
+        [array addObject:[[Model alloc]initHref:[rs stringForColumn:@"href"]
+                                          title:[rs stringForColumn:@"title"]
+                                         parent:[rs stringForColumn:@"parent"]
+                                     parentHref:[rs stringForColumn:@"parenthref"]]];
     }
     
     return array;

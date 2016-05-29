@@ -24,10 +24,15 @@
 
 + (id)fengshuBaseBlock:(void (^)(NSArray *array, NSError *error))block;
 
++ (id)info:(Model *)aModel withBlock:(void (^)(id infoModel, NSError *error))block;
+
++ (void)getAnswer;
+
 + (NSArray *)readFengSu;
 
 + (NSArray *)readFengSuSubCity;
 
 + (NSArray <NSDictionary*> *)readAllData;
++ (NSArray <Model*> *)readAllDataModel;
 
 @end
