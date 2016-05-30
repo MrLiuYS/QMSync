@@ -33,6 +33,9 @@
 + (NSArray *)readFengSuSubCity;
 
 + (NSArray <NSDictionary*> *)readAllData;
+
++ (NSArray <NSDictionary*> *)readAllDataPage:(int)aPage;
+
 + (NSArray <Model*> *)readAllDataModel;
 
 @end
