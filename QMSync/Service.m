@@ -28,7 +28,7 @@
     static Service *_sharedClient = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _sharedClient = [[Service alloc] initWithBaseURL:[NSURL URLWithString:@"http://painting.supfree.net/"]];
+        _sharedClient = [[Service alloc] initWithBaseURL:[NSURL URLWithString:@"http://minghua.supfree.net/"]];
         
         _sharedClient.responseSerializer = [AFHTTPResponseSerializer serializer];
         _sharedClient.operationQueue.maxConcurrentOperationCount = 1;
@@ -58,7 +58,7 @@
                 Block:(void (^)(NSArray *array, NSError *error))block
 {
     //    [SVProgressHUD show];
-    return [[Service fengshuClient] GET:[NSString stringWithFormat:@"chai.asp?id=%d",aPage]
+    return [[Service fengshuClient] GET:[NSString stringWithFormat:@"dao.asp?id=%d",aPage]
                              parameters:nil
                                 success:^(NSURLSessionDataTask *task, id responseObject) {
                                     
