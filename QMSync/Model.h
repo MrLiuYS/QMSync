@@ -15,6 +15,8 @@
 @property (nonatomic, copy) NSString * info;
 @property (nonatomic, copy) NSString * parent;
 @property (nonatomic, copy) NSString * parentHref;
+@property (nonatomic, copy) NSString * related; //相关
+@property (nonatomic, copy) NSString * author;  //作则
 
 - (instancetype)initHref:(NSString *)aHref title:(NSString *)aTitle;
 
