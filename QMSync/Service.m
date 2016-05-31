@@ -53,6 +53,26 @@
                                 }];
     
 }
+
++ (id)fengshuBasePage:(int)aPage
+                Block:(void (^)(NSArray *array, NSError *error))block
+{
+    //    [SVProgressHUD show];
+    return [[Service fengshuClient] GET:[NSString stringWithFormat:@"chai.asp?id=%d",aPage]
+                             parameters:nil
+                                success:^(NSURLSessionDataTask *task, id responseObject) {
+                                    
+                                    block([self parseFengshuList:responseObject],nil);
+                                    
+                                } failure:^(NSURLSessionDataTask *task, NSError *error) {
+                                    
+                                    [SVProgressHUD showErrorWithStatus:@"数据错误,请稍后再试"];
+                                    
+                                }];
+    
+}
+
+
 + (NSArray *)parseFengshuList:(id)response {
     
     NSMutableArray * mainArray = [NSMutableArray array];
@@ -98,7 +118,7 @@
                 NSArray * a = [item  elementsForName:@"a"];
                 
                 for (GDataXMLElement * element in a) {
-                    NSLog(@"%@:%@",element.stringValue,[[element attributeForName:@"href"] stringValue]);
+                    //                    NSLog(@"%@:%@",element.stringValue,[[element attributeForName:@"href"] stringValue]);
                     
                     if ([element attributeForName:@"href"]) {
                         
@@ -118,7 +138,7 @@
                 if (small.count > 0) {
                     
                     for (GDataXMLElement * element in small) {
-                        NSLog(@"%@:%@",element.stringValue,[[element attributeForName:@"small"] stringValue]);
+                        //                        NSLog(@"%@:%@",element.stringValue,[[element attributeForName:@"small"] stringValue]);
                         
                         author = element.stringValue;
                         
@@ -127,7 +147,7 @@
                     NSArray * strong = [item  elementsForName:@"strong"];
                     
                     for (GDataXMLElement * element in strong) {
-                        NSLog(@"%@:%@",element.stringValue,[[element attributeForName:@"strong"] stringValue]);
+                        //                        NSLog(@"%@:%@",element.stringValue,[[element attributeForName:@"strong"] stringValue]);
                         
                         title = element.stringValue;
                         
@@ -154,7 +174,7 @@
                     
                     for (GDataXMLElement * element_a in a) {
                         
-                        NSLog(@"%@:%@",element_a.stringValue,[[element_a attributeForName:@"href"] stringValue]);
+                        //                        NSLog(@"%@:%@",element_a.stringValue,[[element_a attributeForName:@"href"] stringValue]);
                         
                         if ([element_a attributeForName:@"href"]) {
                             
@@ -172,6 +192,18 @@
                 related = [array componentsJoinedByString:@"$-$"];
             }
             
+            Model * model = [[Model alloc]init];
+            
+            model.title = title;
+            model.author = author;
+            model.href = href;
+            model.explain = explain;
+            model.related = related;
+            model.tag = tag;
+            
+            [mainArray addObject:model];
+            
+            NSLog(@"%@",model.href);
             
         }
         
@@ -441,7 +473,7 @@
     FMDatabase *_db = [FMDatabase databaseWithPath:[Service FMDBPath]];
     if ([_db open]) {
         
-        [_db executeUpdate:@"CREATE TABLE IF NOT EXISTS minghua (href TEXT PRIMARY KEY, title TEXT, info TEXT , parent TEXT , parenthref text  , related text)"];
+        [_db executeUpdate:@"CREATE TABLE IF NOT EXISTS minghua (href TEXT PRIMARY KEY, title TEXT , related text , tag text , explain text , author text)"];
     }
     
     return _db;
@@ -454,29 +486,7 @@
     
     for (Model * m in aArray) {
         
-        NSString *hrefStr = @"";
-        NSString *parentHrefStr = @"";
-        
-        NSRange range = [m.href rangeOfString:@"&page"];//匹配得到的下标
-        
-        if (range.length > 0) {
-            
-            hrefStr = [m.href substringToIndex:range.location];
-        }else {
-            hrefStr = m.href;
-        }
-        
-        NSRange range1 = [m.parentHref rangeOfString:@"&page"];//匹配得到的下标
-        
-        if (range1.length > 0) {
-            
-            parentHrefStr = [m.parentHref substringToIndex:range1.location];
-        }else {
-            parentHrefStr = m.parentHref;
-        }
-        
-        
-        [db executeUpdate:@"REPLACE INTO minghua (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",hrefStr,m.title,m.info,m.parent,parentHrefStr];
+        [db executeUpdate:@"REPLACE INTO minghua (href, title, explain ,tag,author, related) VALUES (?,?,?,?,?,?)",m.href,m.title,m.explain,m.tag,m.author,m.related];
         
     }
     [db commit];
