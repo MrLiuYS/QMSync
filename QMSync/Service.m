@@ -754,7 +754,7 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"SELECT * FROM minghua order by href limit %d , 50",aPage*50]];
+    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"SELECT * FROM minghua order by href limit %d , 2",aPage*2]];
     
     while ([rs next]) {
         
@@ -795,10 +795,17 @@
         //        //        [dic setObject:@"" forKey:kshoujia];
         //        [array addObject:dic];
         
-        [array addObject:[[Model alloc]initHref:[rs stringForColumn:@"href"]
-                                          title:[rs stringForColumn:@"title"]
-                                         parent:[rs stringForColumn:@"parent"]
-                                     parentHref:[rs stringForColumn:@"parenthref"]]];
+        
+        Model * model = [[Model alloc]init];
+        
+        model.title = [rs stringForColumn:@"title"];
+        model.author = [rs stringForColumn:@"author"];
+        model.href = [rs stringForColumn:@"href"];
+        model.explain = [rs stringForColumn:@"explain"];
+        model.related = [rs stringForColumn:@"related"];
+        model.tag = [rs stringForColumn:@"tag"];
+        
+        [array addObject:model];
     }
     
     return array;

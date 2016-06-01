@@ -9,7 +9,9 @@
 #import "ViewController.h"
 
 #import "Service.h"
+#import <UIImageView+WebCache.h>
 
+#import <CommonCrypto/CommonDigest.h>
 
 @interface ViewController () {
     
@@ -28,17 +30,17 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    intPage = 0;
+    intPage = 25;
     
     fengsuInfoBtn.enabled = YES;
     
     
-    for (int index = 1; index < 700; index ++) {
-        [Service fengshuBasePage:index
-                           Block:^(NSArray *array, NSError *error) {
-                               
-                           }];
-    }
+    //    for (int index = 1; index < 700; index ++) {
+    //        [Service fengshuBasePage:index
+    //                           Block:^(NSArray *array, NSError *error) {
+    //                               
+    //                           }];
+    //    }
     
     
     //    [Service fengshuBaseBlock:^(NSArray *array, NSError *error) {
@@ -78,6 +80,8 @@
 
 - (IBAction)touchSync:(id)sender {
     
+    NSLog(@"page:%d",intPage);
+    
     NSArray * dbArray = [Service readAllDataPage:intPage];
     
     if (dbArray.count == 0) {
@@ -89,109 +93,231 @@
         return;
     }
     
-    
-    //    NSLog(@"%f",ceil(dbArray.count/50));
-    //    NSLog(@"%lu",MIN(50, dbArray.count % 50));
-    
-    
-    //    dispatch_group_t group = dispatch_group_create();
-    //    
-    //    __block int subcount = 0;
-    //    
-    //    for (int section =0 ; section <= ceil(dbArray.count/50); section++) {
-    //        
-    //        
-    //        dispatch_group_async(group, dispatch_get_global_queue(0,0), ^{
-    //            
-    //            BmobObjectsBatch    *batch = [[BmobObjectsBatch alloc] init] ;
-    //            
-    //            
-    //            for (int row = 0; row < 50; row++) {
-    //                
-    //                if (dbArray.count <= section * 50 + row) {
-    //                    continue;
-    //                }
-    //                
-    //                NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:dbArray[section * 50 + row]];
-    //                
-    //                [batch saveBmobObjectWithClassName:@"riddle" parameters:dic];
-    //                
-    //            }
-    //            
-    //            
-    //            [batch batchObjectsInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-    //                //                NSLog(@"batch error %@",[error description]);
-    //                
-    //                if (isSuccessful) {
-    //                    
-    //                    dispatch_async(dispatch_get_main_queue(), ^{
-    //                        
-    //                        NSLog(@"成功");
-    //                        
-    //                        [SVProgressHUD showProgress:1.0*subcount/dbArray.count
-    //                                             status:[NSString stringWithFormat:@"%d",subcount]];
-    //                        
-    //                        //                        [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"%d",subcount]
-    //                        //                                                    maskType:SVProgressHUDMaskTypeBlack];
-    //                        
-    //                    });
-    //                    
-    //                    subcount++;
-    //                    
-    //                }else {
-    //                    
-    //                    dispatch_async(dispatch_get_main_queue(), ^{
-    //                        
-    //                        NSLog(@"失败");
-    //                        //                        [SVProgressHUD showSuccessWithStatus:@"失败"
-    //                        //                                                    maskType:SVProgressHUDMaskTypeBlack];
-    //                        
-    //                    });
-    //                    
-    //                    
-    //                    
-    //                    
-    //                    //                    failureHandler(error);
-    //                }
-    //                
-    //            }];
-    //            
-    //        });
-    //        
-    //    }
-    
     __block int secion = 0;
+    
     for (int index = 0 ; index < dbArray.count ; index++) {
         
         NSDictionary * dic = dbArray[index];
         
-        BmobObject  *cargo = [BmobObject objectWithClassName:@"riddle"];
+        BmobObject  *cargo = [BmobObject objectWithClassName:@"art"];
         
         [cargo saveAllWithDictionary:dic];
         
-        [cargo saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-            if (isSuccessful) {
-                NSLog(@"成功 :%@",cargo.objectId);
-            }else{
-                if (error) {
-                    NSLog(@"失败:%@",error);
+        {
+            BmobFile *thumFile = [[BmobFile alloc] initWithFilePath:[ViewController filePathHref:[NSString stringWithFormat:@"%@&thumbnail",dic[@"href"]]]];
+            
+            [thumFile saveInBackground:^(BOOL isSuccessful, NSError *error) {
+                //如果文件保存成功，则把文件添加到filetype列
+                if (isSuccessful) {
                     
+                    NSLog(@"小图片提交成功");
+                    
+                    [cargo setObject:thumFile.url  forKey:@"thumbnail"];
+                    
+                    
+                    BmobFile *imageFile = [[BmobFile alloc] initWithFilePath:[ViewController filePathHref:dic[@"href"]]];
+                    
+                    [imageFile saveInBackground:^(BOOL isSuccessful, NSError *error) {
+                        //如果文件保存成功，则把文件添加到filetype列
+                        if (isSuccessful) {
+                            
+                            NSLog(@"原图提交成功");
+                            
+                            
+                            
+                            [cargo setObject:imageFile.url  forKey:@"imageUrl"];
+                            
+                            //                            [cargo saveInBackground];
+                            
+                            [cargo saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+                                
+                                if (isSuccessful) {
+                                    
+                                    NSLog(@"成功");
+                                    
+                                    secion ++;
+                                    
+                                    if (secion >= dbArray.count) {
+                                        
+                                        [self touchSync:nil];
+                                    }
+                                }else {
+                                    NSLog(@"失败:%@",error);
+                                }
+                                
+                            }];
+                            
+                            
+                            
+                        }else{
+                            //进行处理
+                        }
+                    }];
+                    
+                    
+                }else{
+                    //进行处理
                 }
-            }
-            secion ++;
-            
-            if (secion >= dbArray.count) {
-                
-                [self touchSync:nil];
-            }
-            
-        }];
+            }];
+        }
+        
+        
+        
+        //        [cargo saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+        //            if (isSuccessful) {
+        //                NSLog(@"成功 :%@",cargo.objectId);
+        //            }else{
+        //                if (error) {
+        //                    NSLog(@"失败:%@",error);
+        //                    
+        //                }
+        //            }
+        //        secion ++;
+        //        
+        //        if (secion >= dbArray.count) {
+        //            
+        //            [self touchSync:nil];
+        //        }
+        //
+        //        }];
         
     }
     
     intPage ++;
     
     //    [self performSelector:@selector(touchSync:) withObject:nil afterDelay:60*2];
+}
+
+
+- (IBAction)touchImages:(id)sender {
+    
+    
+    [SVProgressHUD showProgress:0 status:0];
+    
+    NSArray * array = [Service readAllDataModel];
+    
+    __block int secion = 1;
+    
+    
+    
+    for (Model * model in array) {
+        
+        UIImageView  * imageView = [[UIImageView alloc]init];
+        
+        [imageView sd_setImageWithURL:[NSURL URLWithString:model.href]
+                            completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                                
+                                if (image) {
+                                    
+                                    
+                                    
+                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                        
+                                        NSData * imageData = UIImageJPEGRepresentation(image,1);
+                                        
+                                        [ViewController saveMedia:imageData
+                                                         withName:[ViewController md5:model.href]
+                                                          Replace:YES];
+                                        
+                                        UIImage * thnImage = [self compressImage:image
+                                                                   toTargetWidth:200];
+                                        
+                                        
+                                        [ViewController saveMedia:UIImageJPEGRepresentation(thnImage,1)
+                                                         withName:[ViewController md5:[NSString stringWithFormat:@"%@&thumbnail",model.href]]
+                                                          Replace:YES];
+                                        
+                                        
+                                        [SVProgressHUD showProgress:1.0 * secion / array.count
+                                                             status:[NSString stringWithFormat:@"%d",secion]];
+                                        
+                                        secion++;
+                                        
+                                    });
+                                    
+                                    
+                                }
+                                
+                            }];
+        
+        
+    }
+    
+    
+    
+    
+}
+
+- (UIImage *)compressImage:(UIImage *)sourceImage toTargetWidth:(CGFloat)targetWidth {
+    CGSize imageSize = sourceImage.size;
+    
+    CGFloat width = imageSize.width;
+    CGFloat height = imageSize.height;
+    
+    CGFloat targetHeight = (targetWidth / width) * height;
+    
+    UIGraphicsBeginImageContext(CGSizeMake(targetWidth, targetHeight));
+    [sourceImage drawInRect:CGRectMake(0, 0, targetWidth, targetHeight)];
+    
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return newImage;
+}
+
+
+#pragma mark - 本地路径
++ (NSString *)pathString {
+    
+    NSString* docsdir = [NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    
+    //    DLog(@"%@",docsdir);
+    
+    return docsdir;
+    
+}
+
++ (NSString *)filePathHref:(NSString *)aHref {
+    
+    NSString *mediaPath = [NSString stringWithFormat:@"%@/%@.jpg",[ViewController pathString],[ViewController md5:aHref]];
+    
+    return mediaPath;
+    
+}
+
+#pragma mark - 保存多媒体数据到本地
++ (void)saveMedia:(NSData *)media withName:(NSString *)name Replace:(BOOL)isReplace{
+    
+    NSString *mediaPath = [NSString stringWithFormat:@"%@/%@.jpg",[ViewController pathString],name];
+    
+    NSFileManager *file_manager = [NSFileManager defaultManager];
+    
+    if ([file_manager fileExistsAtPath:mediaPath]) {
+        
+        if (isReplace) {
+            
+            [file_manager removeItemAtPath:mediaPath error:nil];
+            
+        }
+        
+    }
+    
+    [media writeToFile:mediaPath atomically:YES];
+    
+}
+
++ (NSString *) md5:(NSString *) str
+{
+    const char *cStr = [str UTF8String];
+    unsigned char result[16];
+    CC_MD5(cStr, strlen(cStr), result); // This is the md5 call
+    return [NSString stringWithFormat:
+            @"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+            result[0], result[1], result[2], result[3],
+            result[4], result[5], result[6], result[7],
+            result[8], result[9], result[10], result[11],
+            result[12], result[13], result[14], result[15]
+            ];
 }
 
 

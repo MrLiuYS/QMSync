@@ -54,6 +54,13 @@
                                     <action selector="touchAnswer:" destination="BYZ-38-t0r" eventType="touchUpInside" id="65Q-Wp-xx5"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2N3-06-cOn">
+                                <rect key="frame" x="13" y="160" width="60" height="30"/>
+                                <state key="normal" title="获取图片"/>
+                                <connections>
+                                    <action selector="touchImages:" destination="BYZ-38-t0r" eventType="touchUpInside" id="iNq-g9-Ckx"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
