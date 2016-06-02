@@ -754,7 +754,7 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"SELECT * FROM minghua order by href limit %d , 2",aPage*2]];
+    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"SELECT * FROM minghua order by href limit %d , 1",aPage*1]];
     
     while ([rs next]) {
         

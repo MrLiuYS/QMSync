@@ -30,7 +30,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    intPage = 25;
+    intPage = 765;
     
     fengsuInfoBtn.enabled = YES;
     
@@ -99,67 +99,102 @@
         
         NSDictionary * dic = dbArray[index];
         
-        BmobObject  *cargo = [BmobObject objectWithClassName:@"art"];
         
-        [cargo saveAllWithDictionary:dic];
+        BmobQuery   *bquery = [BmobQuery queryWithClassName:@"art"];
         
-        {
-            BmobFile *thumFile = [[BmobFile alloc] initWithFilePath:[ViewController filePathHref:[NSString stringWithFormat:@"%@&thumbnail",dic[@"href"]]]];
+        [bquery whereKey:@"href" equalTo:dic[@"href"]];
+        
+        [bquery findObjectsInBackgroundWithBlock:^(NSArray *array, NSError *error) {
             
-            [thumFile saveInBackground:^(BOOL isSuccessful, NSError *error) {
-                //如果文件保存成功，则把文件添加到filetype列
-                if (isSuccessful) {
+            
+            if (array.count == 0) {
+                
+                BmobObject  *cargo = [BmobObject objectWithClassName:@"art"];
+                
+                [cargo saveAllWithDictionary:dic];
+                
+                {
+                    BmobFile *thumFile = [[BmobFile alloc] initWithFilePath:[ViewController filePathHref:[NSString stringWithFormat:@"%@&thumbnail",dic[@"href"]]]];
                     
-                    NSLog(@"小图片提交成功");
-                    
-                    [cargo setObject:thumFile.url  forKey:@"thumbnail"];
-                    
-                    
-                    BmobFile *imageFile = [[BmobFile alloc] initWithFilePath:[ViewController filePathHref:dic[@"href"]]];
-                    
-                    [imageFile saveInBackground:^(BOOL isSuccessful, NSError *error) {
+                    [thumFile saveInBackground:^(BOOL isSuccessful, NSError *error) {
                         //如果文件保存成功，则把文件添加到filetype列
                         if (isSuccessful) {
                             
-                            NSLog(@"原图提交成功");
+                            NSLog(@"小图片提交成功");
+                            
+                            [cargo setObject:thumFile.url  forKey:@"thumbnail"];
                             
                             
+                            BmobFile *imageFile = [[BmobFile alloc] initWithFilePath:[ViewController filePathHref:dic[@"href"]]];
                             
-                            [cargo setObject:imageFile.url  forKey:@"imageUrl"];
-                            
-                            //                            [cargo saveInBackground];
-                            
-                            [cargo saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-                                
+                            [imageFile saveInBackground:^(BOOL isSuccessful, NSError *error) {
+                                //如果文件保存成功，则把文件添加到filetype列
                                 if (isSuccessful) {
                                     
-                                    NSLog(@"成功");
+                                    NSLog(@"原图提交成功");
                                     
-                                    secion ++;
                                     
-                                    if (secion >= dbArray.count) {
+                                    
+                                    [cargo setObject:imageFile.url  forKey:@"imageUrl"];
+                                    
+                                    //                            [cargo saveInBackground];
+                                    
+                                    [cargo saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                                         
-                                        [self touchSync:nil];
-                                    }
-                                }else {
-                                    NSLog(@"失败:%@",error);
+                                        if (isSuccessful) {
+                                            
+                                            NSLog(@"成功");
+                                            
+                                            secion ++;
+                                            
+                                            if (secion >= dbArray.count) {
+                                                
+                                                [self touchSync:nil];
+                                            }
+                                        }else {
+                                            NSLog(@"失败:%@",error);
+                                            
+                                            intPage ++;
+                                            [self touchSync:nil];
+                                        }
+                                        
+                                    }];
+                                    
+                                    
+                                    
+                                }else{
+                                    //进行处理
+                                    
+                                    intPage ++;
+                                    [self touchSync:nil];
                                 }
-                                
                             }];
-                            
                             
                             
                         }else{
                             //进行处理
+                            
+                            intPage ++;
+                            [self touchSync:nil];
                         }
                     }];
-                    
-                    
-                }else{
-                    //进行处理
                 }
-            }];
-        }
+                
+                
+            }else {
+                
+                
+                intPage ++;
+                
+                [self touchSync:nil];
+            }
+            
+            
+        }];
+        
+        
+        
+        
         
         
         
@@ -183,7 +218,6 @@
         
     }
     
-    intPage ++;
     
     //    [self performSelector:@selector(touchSync:) withObject:nil afterDelay:60*2];
 }
