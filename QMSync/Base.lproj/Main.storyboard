@@ -61,6 +61,13 @@
                                     <action selector="touchImages:" destination="BYZ-38-t0r" eventType="touchUpInside" id="iNq-g9-Ckx"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cqv-YM-UY3">
+                                <rect key="frame" x="20" y="269" width="46" height="30"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="touchBmobSync:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0Zd-6f-49l"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>

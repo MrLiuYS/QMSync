@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D32B0241D431D24006BC605 /* QMBmobSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D32B0231D431D24006BC605 /* QMBmobSync.m */; };
 		6C091CB11B441F4F00DECCBA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C091CB01B441F4F00DECCBA /* main.m */; };
 		6C091CB41B441F4F00DECCBA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C091CB31B441F4F00DECCBA /* AppDelegate.m */; };
 		6C091CB71B441F4F00DECCBA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C091CB61B441F4F00DECCBA /* ViewController.m */; };
@@ -30,6 +31,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D32B0221D431D24006BC605 /* QMBmobSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QMBmobSync.h; sourceTree = "<group>"; };
+		0D32B0231D431D24006BC605 /* QMBmobSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QMBmobSync.m; sourceTree = "<group>"; };
 		2888C4705B2A7C7EC344F852 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		3166F546D4FCD387189F4C96 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		6C091CAB1B441F4F00DECCBA /* QMSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QMSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,6 +109,8 @@
 				6C091CB31B441F4F00DECCBA /* AppDelegate.m */,
 				6C091CB51B441F4F00DECCBA /* ViewController.h */,
 				6C091CB61B441F4F00DECCBA /* ViewController.m */,
+				0D32B0221D431D24006BC605 /* QMBmobSync.h */,
+				0D32B0231D431D24006BC605 /* QMBmobSync.m */,
 				6C091CD41B44205800DECCBA /* Service.h */,
 				6C091CD51B44205800DECCBA /* Service.m */,
 				6C091CD71B442A5100DECCBA /* Model.h */,
@@ -306,6 +311,7 @@
 			files = (
 				6C091CB71B441F4F00DECCBA /* ViewController.m in Sources */,
 				6C091CD61B44205800DECCBA /* Service.m in Sources */,
+				0D32B0241D431D24006BC605 /* QMBmobSync.m in Sources */,
 				6C091CB41B441F4F00DECCBA /* AppDelegate.m in Sources */,
 				6C091CB11B441F4F00DECCBA /* main.m in Sources */,
 				6C091CD91B442A5100DECCBA /* Model.m in Sources */,

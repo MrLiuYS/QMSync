@@ -12,6 +12,7 @@
 #import <UIImageView+WebCache.h>
 
 #import <CommonCrypto/CommonDigest.h>
+#import "QMBmobSync.h"
 
 @interface ViewController () {
     
@@ -35,27 +36,17 @@
     fengsuInfoBtn.enabled = YES;
     
     
-    //    for (int index = 1; index < 700; index ++) {
-    //        [Service fengshuBasePage:index
-    //                           Block:^(NSArray *array, NSError *error) {
-    //                               
-    //                           }];
-    //    }
     
-    
-    //    [Service fengshuBaseBlock:^(NSArray *array, NSError *error) {
-    //        
-    //        //        [Service readFengSuSubCity];
-    //        
-    //        fengsuInfoBtn.enabled = YES;
-    //        
-    //        [SVProgressHUD dismiss];
-    //    }];
-    //    
+}
+
+- (IBAction)touchBmobSync:(id)sender {
     
     
     
 }
+
+
+
 
 
 - (IBAction)touchFengsuInfo:(id)sender {
