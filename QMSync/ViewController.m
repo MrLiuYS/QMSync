@@ -41,8 +41,6 @@
 
 - (IBAction)touchBmobSync:(id)sender {
     
-    
-    
 }
 
 

@@ -8,6 +8,25 @@
 
 #import <Foundation/Foundation.h>
 
+//QMBmobSync * sync = [[QMBmobSync alloc]init];
+//
+//sync.bmobKey = @"";
+//sync.bmobTable = @"art";
+//sync.bmobTableKey = @"readNum";
+//sync.bmobSyncIden = @"2016-07-31";
+//
+//sync.isRandom = YES;
+//sync.intOnline = 20;
+//sync.intOffline = 0;
+//
+//[SVProgressHUD show];
+//[sync startSyncBmobBlock:^(BOOL isSuccessful, NSError *error) {
+//    [SVProgressHUD showSuccessWithStatus:@"成功"];
+//    NSLog(@"成功");
+//}];
+
+
+
 @interface QMBmobSync : NSObject
 
 @property (nonatomic,copy) NSString *bmobKey;/**< bmob 注册key */
