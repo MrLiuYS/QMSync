@@ -69,11 +69,21 @@
                 [batch batchObjectsInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                     
                     if (isSuccessful) {
+<<<<<<< HEAD
                         NSLog(@"节点成功");
                     }else {
                         NSLog(@"节点失败------");
                     }
                     
+=======
+                        
+                        NSLog(@"更新数据片段成功");
+                    }else {
+                        NSLog(@"更新数据片段异常:%@",error.description);
+                    }
+                    
+                    
+>>>>>>> origin/bmobSync
                     [self syncTableName:aTableName keyName:aKeyName block:^(BOOL isSuccessful, NSError *error) {
                         
                     }];

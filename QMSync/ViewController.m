@@ -41,6 +41,7 @@
 
 - (IBAction)touchBmobSync:(id)sender {
     
+<<<<<<< HEAD
     QMBmobSync * sync = [[QMBmobSync alloc]init];
     
     
@@ -61,6 +62,8 @@
     }];
     
     
+=======
+>>>>>>> origin/bmobSync
 }
 
 
