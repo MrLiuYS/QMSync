@@ -41,6 +41,24 @@
 
 - (IBAction)touchBmobSync:(id)sender {
     
+    QMBmobSync * sync = [[QMBmobSync alloc]init];
+    
+    
+    sync.bmobTable = @"riddle";
+    
+    sync.bmobTableKey = @"riddleNumber";
+    
+    sync.bmobSyncIden = @"2016-09-03";
+    
+    sync.isRandom = YES;
+    
+    sync.intOnline = 20;
+    sync.intOffline = 10;
+    
+    
+    [sync startSyncBmobBlock:^(BOOL isSuccessful, NSError *error) {
+        
+    }];
     
     
 }

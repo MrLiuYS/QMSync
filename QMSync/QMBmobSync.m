@@ -68,6 +68,12 @@
                 
                 [batch batchObjectsInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                     
+                    if (isSuccessful) {
+                        NSLog(@"节点成功");
+                    }else {
+                        NSLog(@"节点失败------");
+                    }
+                    
                     [self syncTableName:aTableName keyName:aKeyName block:^(BOOL isSuccessful, NSError *error) {
                         
                     }];
