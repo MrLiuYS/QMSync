@@ -8,6 +8,13 @@
 
 #import "Service.h"
 
+/**
+ *  表 名
+ */
+#define kLYS_TabelName @"Brains"
+
+#define kLYS_HtmlBase @"http://jzw.supfree.net/"
+
 @implementation Service
 
 #pragma mark - 数据转换成中文
@@ -28,7 +35,7 @@
     static Service *_sharedClient = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _sharedClient = [[Service alloc] initWithBaseURL:[NSURL URLWithString:@"http://miyu.m.supfree.net/"]];
+        _sharedClient = [[Service alloc] initWithBaseURL:[NSURL URLWithString:kLYS_HtmlBase]];
         
         _sharedClient.responseSerializer = [AFHTTPResponseSerializer serializer];
         _sharedClient.operationQueue.maxConcurrentOperationCount = 1;
@@ -383,7 +390,9 @@
     FMDatabase *_db = [FMDatabase databaseWithPath:[Service FMDBPath]];
     if ([_db open]) {
         
-        [_db executeUpdate:@"CREATE TABLE IF NOT EXISTS fengshu (href TEXT PRIMARY KEY, title TEXT, info TEXT , parent TEXT , parenthref text)"];
+        NSString  * sqlStr = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (href TEXT PRIMARY KEY, title TEXT, info TEXT , parent TEXT , parenthref text)",kLYS_TabelName];
+        
+        [_db executeUpdate:sqlStr];
     }
     
     return _db;
@@ -417,8 +426,9 @@
             parentHrefStr = m.parentHref;
         }
         
+        NSString * sqlStr = [NSString stringWithFormat:@"REPLACE INTO %@ (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",kLYS_TabelName];
         
-        [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",hrefStr,m.title,m.info,m.parent,parentHrefStr];
+        [db executeUpdate:sqlStr,hrefStr,m.title,m.info,m.parent,parentHrefStr];
         
     }
     [db commit];
@@ -477,7 +487,9 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where  title != '' and parenthref = ''   order by href desc  LIMIT 95 , 5"];
+    NSString * sqlStr = [NSString stringWithFormat:@"SELECT * FROM %@ where  title != '' and parenthref = ''   order by href desc  LIMIT 95 , 5",kLYS_TabelName];
+    
+    FMResultSet *rs = [db executeQuery:sqlStr];
     
     while ([rs next]) {
         
@@ -566,8 +578,8 @@
                     parentHrefStr = infoModel.parentHref;
                 }
                 
-                
-                [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",hrefStr,infoModel.title,infoModel.info,infoModel.parent,parentHrefStr];
+                NSString * sqlStr = [NSString stringWithFormat:@"REPLACE INTO %@ (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",kLYS_TabelName];
+                [db executeUpdate:sqlStr,hrefStr,infoModel.title,infoModel.info,infoModel.parent,parentHrefStr];
                 
                 //                [SVProgressHUD showProgress:i/(1.0 * array.count)];
                 [SVProgressHUD showProgress:i/(1.0 * array.count)
@@ -591,7 +603,9 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu where parenthref == ''"];
+    NSString * sqlStr = [NSString stringWithFormat:@"SELECT * FROM %@ where parenthref == ''",kLYS_TabelName];
+    
+    FMResultSet *rs = [db executeQuery:sqlStr];
     
     while ([rs next]) {
         
@@ -639,8 +653,9 @@
                     parentHrefStr = temp.parentHref;
                 }
                 
+                NSString * sqlStr = [NSString stringWithFormat:@"REPLACE INTO %@ (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",kLYS_TabelName];
                 
-                [db executeUpdate:@"REPLACE INTO fengshu (href, title, info ,parent,parenthref) VALUES (?,?,?,?,?)",hrefStr,temp.title,temp.info,m.parent,parentHrefStr];
+                [db executeUpdate:sqlStr,hrefStr,temp.title,temp.info,m.parent,parentHrefStr];
                 
             }
             
@@ -658,7 +673,9 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu limit 0 , 500"];
+    NSString * sqlStr = [NSString stringWithFormat:@"SELECT * FROM %@ limit 0 , 500",kLYS_TabelName];
+    
+    FMResultSet *rs = [db executeQuery:sqlStr];
     
     while ([rs next]) {
         
@@ -686,7 +703,7 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"SELECT * FROM fengshu order by href limit %d , 50",aPage*50]];
+    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"SELECT * FROM %@ order by href limit %d , 50",kLYS_TabelName,aPage*50]];
     
     while ([rs next]) {
         
@@ -716,7 +733,7 @@
     
     FMDatabase * db = [Service db];
     
-    FMResultSet *rs = [db executeQuery:@"SELECT * FROM fengshu"];
+    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"SELECT * FROM %@",kLYS_TabelName]];
     
     while ([rs next]) {
         
