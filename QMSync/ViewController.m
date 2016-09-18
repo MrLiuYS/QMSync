@@ -44,16 +44,16 @@
     QMBmobSync * sync = [[QMBmobSync alloc]init];
     
     sync.bmobKey = @"";
-    sync.bmobTable = @"art";
-    sync.bmobTableKey = @"imagesource";
+    sync.bmobTable = @"riddle";
+    sync.bmobTableKey = @"riddleNumber";
     
     
-    sync.bmobSyncIden = @"2016-09-04-imagesource:true";
+    sync.bmobSyncIden = @"2016-09-18";
     
-    sync.bmobTableKeyObject = @(YES);
-    //    sync.isRandom = YES;
-    //    sync.intOnline = 20;
-    //    sync.intOffline = 0;
+    //    sync.bmobTableKeyObject = @(YES);
+    sync.isRandom = YES;
+    sync.intOnline = 20;
+    sync.intOffline = 0;
     
     [SVProgressHUD show];
     [sync startSyncBmobBlock:^(BOOL isSuccessful, NSError *error) {
